@@ -1,7 +1,8 @@
+import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { useCart } from '../../CartContext/CartContext';
-import { Link } from 'react-router-dom';
 import { FaTrash, FaTimes } from 'react-icons/fa';
+
 
 const CartPage = () => {
   const { cartItems, cartTotal, removeFromCart, updateQuantity } = useCart();
@@ -29,34 +30,38 @@ const CartPage = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {cartItems.map((item) => (
+              {cartItems.map((item) => {
+                console.log("item", item)
+                return(
                 <div
-                  key={item.id}
+                  key={item._id} // Use cart item ID
                   className="group bg-amber-900/20 p-4 rounded-2xl border-4 border-dashed border-amber-500/30 backdrop-blur-sm flex flex-col items-center gap-4 transition-all duration-300 hover:border-solid hover:shadow-xl hover:shadow-amber-900/10 transform hover:-translate-y-1 animate-fade-in"
                 >
                   <div
                     className="w-24 h-24 cursor-pointer relative overflow-hidden rounded-lg transition-transform duration-300"
-                    onClick={() => setSelectedImage(item.image)}
+                    onClick={() => setSelectedImage(item.item.imageUrl)} // nested
                   >
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.item.imageUrl}
+                      alt={item.item.name}
                       className="w-full h-full object-contain"
                     />
                   </div>
 
                   <div className="w-full text-center">
                     <h3 className="text-xl font-dancingscript text-amber-100">
-                      {item.name}
+                      {item.item.name}
                     </h3>
                     <p className="text-amber-100/80 font-cinzel mt-1">
-                      ₹{item.price}
+                      ₹{item.item.price}
                     </p>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        item.quantity > 1 && updateQuantity(item.item._id, item.quantity - 1) 
+                      }
                       className="px-3 py-1 bg-amber-800 text-white rounded hover:bg-amber-700"
                     >
                       −
@@ -65,7 +70,7 @@ const CartPage = () => {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      onClick={() => updateQuantity(item.item._id, item.quantity + 1)}
                       className="px-3 py-1 bg-amber-800 text-white rounded hover:bg-amber-700"
                     >
                       +
@@ -74,18 +79,19 @@ const CartPage = () => {
 
                   <div className="flex items-center justify-between w-full mt-4">
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.item._id)} // Use cart item ID
                       className="bg-amber-900/40 px-3 py-1 rounded-full font-cinzel text-xs uppercase transition-all duration-300 hover:bg-amber-800/50 flex items-center gap-1 active:scale-95"
                     >
                       <FaTrash className="w-4 h-4 text-amber-100" />
                       <span className="text-amber-100">Remove</span>
                     </button>
                     <p className="text-sm font-dancingscript text-amber-300">
-                      ₹{item.price * item.quantity}
+                      ₹{item.item.price * item.quantity}
                     </p>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
 
             <div className="mt-12 pt-8 border-t border-amber-800/30 animate-fade-in-up">
@@ -101,9 +107,9 @@ const CartPage = () => {
                   <h2 className="text-3xl font-dancingscript text-amber-100">
                     Total: ₹{cartTotal}
                   </h2>
-                  <button className="bg-amber-900/40 px-8 py-3 rounded-full font-cinzel uppercase tracking-wider hover:bg-amber-800/50 transition-all duration-300 text-amber-100 flex items-center gap-2 hover:gap-3 active:scale-95">
+                  <Link to='/checkout' className="bg-amber-900/40 px-8 py-3 rounded-full font-cinzel uppercase tracking-wider hover:bg-amber-800/50 transition-all duration-300 text-amber-100 flex items-center gap-2 hover:gap-3 active:scale-95">
                     Checkout Now
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -126,12 +132,12 @@ const CartPage = () => {
               alt="Full View"
               className="max-w-[90vw] max-h-[90vh] rounded-lg object-contain"
             />
-            <button
+            <Link
               onClick={() => setSelectedImage(null)}
               className="absolute top-2 right-2 bg-amber-900/80 text-white p-2 rounded-full hover:bg-amber-800 active:scale-90 transition duration-200"
             >
               <FaTimes className="w-6 h-6" />
-            </button>
+            </Link>
           </div>
         </div>
       )}
